@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "./interfaces/IPaymentERC20Registry.sol";
 import "./interfaces/ICancellationRegistry.sol";
+import "hardhat/console.sol";
 
 /* This contains all data of the BuyOrder */
 struct BuyOrder {
@@ -42,8 +43,8 @@ contract BullieverseMarketPlace is Ownable, Pausable, ReentrancyGuard {
     bytes4 private constant InterfaceId_ERC721 = 0x80ac58cd; // The ERC-165 identifier for 721
     bytes4 private constant InterfaceId_ERC1155 = 0xd9b67a26; // The ERC-165 identifier for 1155
 
-    IPaymentERC20Registry paymentERC20Registry;
-    ICancellationRegistry cancellationRegistry;
+    IPaymentERC20Registry public paymentERC20Registry;
+    ICancellationRegistry public cancellationRegistry;
 
     address payable _makerWallet;
 
@@ -57,7 +58,7 @@ contract BullieverseMarketPlace is Ownable, Pausable, ReentrancyGuard {
         keccak256(
             "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
         );
-    bytes32 private DOMAIN_SEPARATOR =
+    bytes32 public DOMAIN_SEPARATOR =
         keccak256(
             abi.encode(
                 EIP712_DOMAIN_TYPE_HASH,
@@ -313,6 +314,7 @@ contract BullieverseMarketPlace is Ownable, Pausable, ReentrancyGuard {
         uint256 createrFee = (price * createrPercentageFee) / 10000;
         uint256 platformFee = (price * platformPercentageFee) / 10000;
 
+
         if (paymentERC20 == address(0)) {
             if (platformFee > 0) {
                 (bool platformFeePaid, ) = _platformWallet.call{
@@ -421,7 +423,7 @@ contract BullieverseMarketPlace is Ownable, Pausable, ReentrancyGuard {
         // Checks that the buyer has sufficient funds.
         require(
             IERC20(paymentERC20).balanceOf(buyer) >= price,
-            "Buyer has an insufficient balance of the ERC20."
+            "Buyer's balance is insufficient"
         );
 
         // Checks that the Exchange contract has a sufficient allowance of the token.

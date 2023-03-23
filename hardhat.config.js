@@ -1,39 +1,34 @@
+require("dotenv").config();
+
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-ganache");
+require("hardhat-gas-reporter");
+
+const { MNEMONIC } = process.env;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "rinkeby",
+  defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
-    rinkeby: {
-      url: "https://rinkeby.infura.io/v3/e0737333518f412892d21b1762e8fe47",
-      accounts: [""],
-      chainId: 4,
-      live: true,
-      saveDeployments: true,
-      // tags: ["staging"],
-      // gasPrice: 5000000000,
-      // gasMultiplier: 2,
-    },
     mainnet: {
       url: `https://mainnet.infura.io/v3/7cd4731a3be74a6ab7c32fe799ab3177`,
-      accounts: [""],
+      accounts: [MNEMONIC],
       gasPrice: 120 * 1000000000,
       // chainId: 1,
     },
     polygontestnet: {
       url: `https://polygon-mumbai.infura.io/v3/e0737333518f412892d21b1762e8fe47`,
-      accounts: [""],
+      accounts: [MNEMONIC],
       //gasPrice: 120 * 1000000000,
       // chainId: 1,
     },
     polygon: {
       url: `https://polygon-mainnet.infura.io/v3/e0737333518f412892d21b1762e8fe47`,
-      accounts: [""],
+      accounts: [MNEMONIC],
       gasPrice: 120 * 1000000000,
       // chainId: 1,
     },
@@ -59,5 +54,12 @@ module.exports = {
   },
   mocha: {
     timeout: 20000,
+  },
+  gasReporter: {
+    enabled: true,
+    // outputFile: "gas-report-with-out-history-with-10.txt",
+    currency: "USD",
+    //coinmarketcap: process.env.coinmarketcap,
+    gasPrice: 20,
   },
 };
